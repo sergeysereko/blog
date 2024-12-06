@@ -7,9 +7,10 @@ services:
     container_name: php-app
     volumes:
       - ./src:/var/www/html
-      - ./src/db_init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./includes:/var/www/html/includes
+      - ./assets:/var/www/html/assets
     ports:
-      - 8080:80
+      - "8080:80"
     depends_on:
       - db
 
@@ -19,8 +20,13 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: blog
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
     ports:
-      - 3307:3306
+      - "3307:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./src/db_init.sql:/docker-entrypoint-initdb.d/init.sql
 
   composer:
     image: composer:latest
